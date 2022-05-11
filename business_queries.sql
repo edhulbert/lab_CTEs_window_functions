@@ -83,19 +83,30 @@
 -- FROM employees;
 
 -- 2. Determine if any employees started on the same day (hint: some sort of ranking may be useful here)
-SELECT * FROM (
-    SELECT
-        employees.start_date,
-        RANK() OVER (PARTITION BY employees.start_date ORDER BY employees.id) AS ranks
-    FROM employees) as xyz
- WHERE ranks = 2;
+-- WITH date_ranks (start_date, rank) AS
+--     (SELECT
+--         employees.start_date,
+--         RANK() OVER (PARTITION BY employees.start_date ORDER BY employees.id)
+--     FROM employees)
+-- SELECT * 
+-- FROM date_ranks
+-- WHERE date_ranks.rank = 2;
  -- this determines if employees started on the same day by displaying the dates 
 
-
-
 -- 3. Find how many employees there are from each country
+-- SELECT 
+-- employees.country,
+-- COUNT(*)
+-- FROM employees
+-- GROUP BY employees.country;
 
 -- 4. Show how the average salary cost for each department has changed as the number of employees has increased
+-- SELECT 
+--     *,
+--     AVG(employees.salary) OVER (PARTITION BY departments.id ORDER BY employees.start_date)
+-- FROM departments
+-- INNER JOIN employees
+-- ON departments.id = employees.department_id;
 
 -- 5. Extension: Research the EXTRACT function and use it in conjunction with PARTITION and COUNT to show how many employees started working for BusinessCorp™ each year. If you're feeling adventurous you could further partition by month...
 
@@ -105,10 +116,13 @@ SELECT * FROM (
 
 
 -- 1. Find the maximum and minimum salaries
+--SELECT MAX(salary), MIN(salary) FROM employees;
 
 -- 2. Find the difference between the maximum and minimum salaries and each employee's own salary
+--SELECT id, salary, MAX(salary) OVER () - salary AS diff_between_max_and_salary, salary - MIN(salary) OVER () AS diff_between_salary_and_min FROM employees;
 
 -- 3. Order the employees by start date. Research how to calculate the median salary value and the standard deviation in salary values and show how these change as more employees join the company
+
 
 -- 4. Limit this query to only Research & Development team members and show a rolling value for only the 5 most recent employees.
 
