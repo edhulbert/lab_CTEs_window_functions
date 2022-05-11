@@ -75,14 +75,23 @@
 
 
 -- 1. Find the running total of salary costs as the business has grown and hired more people
-SELECT 
-    employees.id,
-    employees.start_date,
-    employees.salary,
-    SUM(employees.salary) OVER (ORDER BY employees.start_date) AS salary_running_total
-FROM employees;
+-- SELECT 
+--     employees.id,
+--     employees.start_date,
+--     employees.salary,
+--     SUM(employees.salary) OVER (ORDER BY employees.start_date) AS salary_running_total
+-- FROM employees;
 
 -- 2. Determine if any employees started on the same day (hint: some sort of ranking may be useful here)
+SELECT * FROM (
+    SELECT
+        employees.start_date,
+        RANK() OVER (PARTITION BY employees.start_date ORDER BY employees.id) AS ranks
+    FROM employees) as xyz
+ WHERE ranks = 2;
+ -- this determines if employees started on the same day by displaying the dates 
+
+
 
 -- 3. Find how many employees there are from each country
 
