@@ -10,7 +10,7 @@
 -- FROM departments
 -- LEFT JOIN employees
 -- ON departments.id = employees.department_id
--- GROUP BY departments.id, departments.name
+-- GROUP BY departments.id
 -- ORDER BY departments.id;
 
 -- 3. Using a CTE find the ratio of each employees salary to their team average
@@ -32,26 +32,26 @@
 -- ON employees.department_id = department_avg_salary.department_id;
 
 -- 4. Find the employee with the highest ratio in Argentina
--- WITH department_avg_salary (department_id, department_name, average_salary) AS
---     (SELECT
---         departments.id, 
---         departments.name, 
---         AVG(employees.salary)
---     FROM departments
---     INNER JOIN employees
---     ON departments.id = employees.department_id
---     GROUP BY departments.id, departments.name
---     ORDER BY departments.id)
--- SELECT
---     employees.id,
---     MAX(employees.salary / department_avg_salary.average_salary) AS salary_ratio
--- FROM employees
--- INNER JOIN department_avg_salary
--- ON employees.department_id = department_avg_salary.department_id
--- WHERE employees.country = 'Argentina'
--- GROUP BY employees.id
--- ORDER BY salary_ratio DESC
--- LIMIT 1;
+WITH department_avg_salary (department_id, department_name, average_salary) AS
+    (SELECT
+        departments.id, 
+        departments.name, 
+        AVG(employees.salary)
+    FROM departments
+    INNER JOIN employees
+    ON departments.id = employees.department_id
+    GROUP BY departments.id, departments.name
+    ORDER BY departments.id)
+SELECT
+    employees.id,
+    MAX(employees.salary / department_avg_salary.average_salary) AS salary_ratio
+FROM employees
+INNER JOIN department_avg_salary
+ON employees.department_id = department_avg_salary.department_id
+WHERE employees.country = 'Argentina'
+GROUP BY employees.id
+ORDER BY salary_ratio DESC
+LIMIT 1;
 
 -- 5. Extension: Add a second CTE calculating the average salary for each country and add a column showing the difference between each employee's salary and their country averageS 
 -- WITH country_avg_salary (country_name, average_salary) AS
@@ -93,6 +93,13 @@
 -- WHERE date_ranks.rank = 2;
  -- this determines if employees started on the same day by displaying the dates 
 
+--  SELECT 
+-- 	RANK() OVER (ORDER BY start_date) AS simple_ranking,
+-- 	DENSE_RANK() OVER (ORDER BY start_date) AS dense_ranking
+-- FROM employees
+-- ORDER BY simple_ranking DESC
+-- this was solution given: it shows the rank and dense rank for each employee sorted by start date
+
 -- 3. Find how many employees there are from each country
 -- SELECT 
 -- employees.country,
@@ -121,8 +128,23 @@
 -- 2. Find the difference between the maximum and minimum salaries and each employee's own salary
 --SELECT id, salary, MAX(salary) OVER () - salary AS diff_between_max_and_salary, salary - MIN(salary) OVER () AS diff_between_salary_and_min FROM employees;
 
--- 3. Order the employees by start date. Research how to calculate the median salary value and the standard deviation in salary values and show how these change as more employees join the company
-
+-- 3. Order the employees by start date. Research how to calculate the NOT THIS->(median salary value and) the standard deviation in salary values and show how these change as more employees join the company
+-- SELECT 
+--     id, 
+--     start_date, 
+--     salary,
+--     STDDEV(salary) OVER (ORDER BY start_date)
+-- FROM employees;
 
 -- 4. Limit this query to only Research & Development team members and show a rolling value for only the 5 most recent employees.
+-- SELECT 
+--     employees.id, 
+--     departments.name,
+--     start_date, 
+--     salary,
+--     STDDEV(salary) OVER (ORDER BY start_date ROWS 5 PRECEDING)
+-- FROM employees
+-- INNER JOIN departments
+-- ON employees.department_id = departments.id
+-- WHERE departments.name = 'Research and Development';
 
