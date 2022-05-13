@@ -32,26 +32,27 @@
 -- ON employees.department_id = department_avg_salary.department_id;
 
 -- 4. Find the employee with the highest ratio in Argentina
-WITH department_avg_salary (department_id, department_name, average_salary) AS
-    (SELECT
-        departments.id, 
-        departments.name, 
-        AVG(employees.salary)
-    FROM departments
-    INNER JOIN employees
-    ON departments.id = employees.department_id
-    GROUP BY departments.id, departments.name
-    ORDER BY departments.id)
-SELECT
-    employees.id,
-    MAX(employees.salary / department_avg_salary.average_salary) AS salary_ratio
-FROM employees
-INNER JOIN department_avg_salary
-ON employees.department_id = department_avg_salary.department_id
-WHERE employees.country = 'Argentina'
-GROUP BY employees.id
-ORDER BY salary_ratio DESC
-LIMIT 1;
+-- WITH department_avg_salary (department_id, department_name, average_salary) AS
+--     (SELECT
+--         departments.id, 
+--         departments.name, 
+--         AVG(employees.salary)
+--     FROM departments
+--     INNER JOIN employees
+--     ON departments.id = employees.department_id
+--     GROUP BY departments.id, departments.name
+--     ORDER BY departments.id)
+-- SELECT
+--     employees.id,
+--     employees.first_name,
+--     MAX(employees.salary / department_avg_salary.average_salary) AS salary_ratio
+-- FROM employees
+-- INNER JOIN department_avg_salary
+-- ON employees.department_id = department_avg_salary.department_id
+-- WHERE employees.country = 'Argentina'
+-- GROUP BY employees.id
+-- ORDER BY salary_ratio DESC
+-- LIMIT 1;
 
 -- 5. Extension: Add a second CTE calculating the average salary for each country and add a column showing the difference between each employee's salary and their country averageS 
 -- WITH country_avg_salary (country_name, average_salary) AS
